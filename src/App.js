@@ -1,7 +1,8 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import {useEffect,useState} from "react";
-import { Grid,Box} from "@mui/material";
+import { Grid} from "@mui/material";
+import { useCallback } from 'react';
+
 
 function DisplayGrid({data})
 {
@@ -50,6 +51,13 @@ function App()
     const [search,updateSearch]=useState('');
     const [filteredData,setFilteredData]=useState();
 
+
+    // Inside your component
+const filterData = useCallback(() => {
+  const filtered_data = (search && data) ? data.filter(country => country.name.common.toLowerCase().includes(search.toLowerCase())) : data;
+  setFilteredData(filtered_data);
+}, [search, data, setFilteredData]);
+
     useEffect(()=>{
         async function getData()
         {
@@ -75,13 +83,11 @@ function App()
             console.log("an error occured");
         }
         
-    },[search,data])
+    },[search,data, filterData])
 
-    const filterData=()=>{
-        
-        const filtered_data = (search && data)?data.filter((country) => country.name.common.toLowerCase().includes(search.toLowerCase())):data;
-        setFilteredData(filtered_data);   
-    }
+    
+    
+
     return(
         <div>
             <center><input style={{marginTop:"30px", textAlign:"center", position:"fixed"}}type="text" placeholder="Search for countries..." onChange={(event)=>{updateSearch(event.target.value);filterData();}} /></center>
